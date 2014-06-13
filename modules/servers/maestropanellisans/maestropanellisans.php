@@ -12,7 +12,7 @@ require_once("libs/MaestroPanelLisans.php");
 function maestropanellisans_ConfigOptions() {
 
     $configarray = array(
-            "Lisans Tipi" => array("Type" => "dropdown", "Options" => "Ücretsiz - 10 Domain,Ücretsiz - 30 Domain,Aylık,Yıllık"),        
+            "Lisans Tipi" => array("Type" => "dropdown", "Options" => "free10|Ücretsiz - 10 Domain,free30|Ücretsiz - 30 Domain,monthly|Aylık,yearly|Yıllık"), 
 	);
 
 	return $configarray;
@@ -22,18 +22,21 @@ function maestropanellisans_ConfigOptions() {
 function maestropanellisans_CreateAccount($params) {
 //var_dump($params);die();
 
-    $sql = "SELECT * FROM tblproducts WHERE servertype='maestropanellisans' AND configoption1 LIKE 'Free%'";
+    $sql = "SELECT * FROM tblproducts WHERE servertype='maestropanellisans' AND configoption1 LIKE 'free%'";
     $query=mysql_query( $sql );
     $freeIds = array();
     while( $row = mysql_fetch_assoc( $query ) ){
         $freeIds[] = $row['id'];
     }
 
+	$expconfig = explode("|",$params['configoption1']);
+	$period = $expconfig[0];
 
-    $sql = "SELECT count(th.id) total FROM tblhosting th   WHERE domainstatus='Active' AND packageid IN (" . implode(',', $freeIds)  . ")" ;
+    $sql = "SELECT count(th.id) total FROM tblhosting th WHERE domainstatus='Active' AND userid=" . $_SESSION['uid'] . " AND packageid IN (" . implode(',', $freeIds)  . ")" ;
     $query=mysql_query( $sql );
     $result=mysql_fetch_assoc( $query );
     if( $result['total'] ){
+		logModuleCall('maestropanellisans','create','User ID: ' . $_SESSION['uid'] . PHP_EOL . 'IP: ' . $_SERVER['REMOTE_ADDR'] . PHP_EOL . 'License Type: ' . $period,'Failed / User has reached free license limit','','');
         return "Her müşteri yalnızca 1 adet ücretsiz MaestroPanel lisansı alabilmektedir.";
     }
 
@@ -52,18 +55,6 @@ function maestropanellisans_CreateAccount($params) {
  	$query= "select value from tblcustomfieldsvalues where fieldid=".$result[id] ." and relid=".$params['serviceid'];
 	$result = mysql_fetch_array( mysql_query( $query ) );
 	$licenseName = $result[value];
-	
-//    $period = strtolower($params['configoption1']);
-
-   if ($params['configoption1'] = 'Ücretsiz - 10 Domain') {
-		$period = 'free10';
-	} elseif ($params['configoption1'] = 'Ücretsiz - 30 Domain') {
-		$period = 'free30';
-	} elseif ($params['configoption1'] = 'Aylık') {
-		$period = 'monthly';
-	}  elseif ($params['configoption1'] = 'Yıllık') {
-		$period = 'yearly';
-	} 
 
     $request = $mp->create(  $period, $licenseName );
 
@@ -86,8 +77,10 @@ function maestropanellisans_CreateAccount($params) {
 
 	if ($successful){
 		$result = "success";
+		logModuleCall('maestropanellisans','create','User ID: ' . $_SESSION['uid'] . PHP_EOL . 'IP: ' . $_SERVER['REMOTE_ADDR'] . PHP_EOL . 'License Code: ' . $lc . PHP_EOL . 'License Type: ' . $period,'success','','');
 	} else {
 		$result = $request->Message;
+		logModuleCall('maestropanellisans','create','User ID: ' . $_SESSION['uid'] . PHP_EOL . 'IP: ' . $_SERVER['REMOTE_ADDR'] . PHP_EOL . 'License Type: ' . $period . PHP_EOL . 'ERR MSG: ' . $result,'fail','','');
 	}
 	return $result;
 
@@ -133,6 +126,7 @@ function maestropanellisans_ClientArea($params) {
         $values['vars']['lerror'] = $request->Message;
     }else{
         $values['vars']['lerror'] = '';
+		$values['vars']['lserviceid'] = $params['serviceid'];
         $values['vars']['lc'] = $request->license->licenseCode;
         $values['vars']['ln'] = $request->license->licenseName;
         $values['vars']['expiration'] = date("d.m.Y", strtotime( $request->license->Expiration ) );
@@ -193,7 +187,6 @@ function maestropanellisans_reissue( $params ){
     $request = $mp->reissue( $lc );
 
     if( !$request->errorCode ){
-        logModuleCall('maestropanellisans','reissue','','success','','');
         $successful=true;
     }
     else{
@@ -202,9 +195,10 @@ function maestropanellisans_reissue( $params ){
 
      if ($successful){
                 $result = "success";
+				logModuleCall('maestropanellisans','reissue','User ID: ' . $_SESSION['uid'] . PHP_EOL . 'IP: ' . $_SERVER['REMOTE_ADDR'] . PHP_EOL . 'License Code: ' . $lc,'success','','');
         } else {
-                logModuleCall('maestropanellisans','reissue','',$request->Message,'','');
                 $result = $request->Message;
+				logModuleCall('maestropanellisans','reissue','User ID: ' . $_SESSION['uid'] . PHP_EOL . 'IP: ' . $_SERVER['REMOTE_ADDR'] . PHP_EOL . 'ERR MSG: ' . $result,'fail','','');
         }
         return $result;
 

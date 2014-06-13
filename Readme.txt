@@ -35,3 +35,14 @@ değiştirebilirsiniz.
 
 modules/servers/maestropanellisans/clientarea.tpl
 
+
+#################################################################
+
+
+v1.1 Değişiklikler
+- Her kullanıcının birden fazla ücretsiz lisans almasını engelleyen fonkisyon düzeltildi.
+- Ürün detayları bölümüne "Boşa Çıkart" butonu ve butona uyarı mesajı eklendi. (clientarea.tpl)
+- Modül işlemlerinin tümü loglara kaydedilmesi sağlandı. Admin alanında "Utilities > Logs >  Module Log" admında "Enable Debug Logging" opsiyonunu aktif etmeyi unutmayınız.
+- Bazı kurulumlarda lisans tiplerinde Türkçe karakterlerden kaynaklanan sorunlar düzeltildi.
+
+Önemli: Bu güncelleme sonrası modülün çalışmaması halinde lütfen ürün detaylarında Module seçeneğini "None" yaparak kaydediniz. Ardından tekrar "MaestroPanelLisans" modülü seçerek modül ayarlarını yapınız.
