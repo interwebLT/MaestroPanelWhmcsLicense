@@ -1,9 +1,10 @@
 ﻿// ############################################################	//
-//	MaestroPanel Lisans API - WHMCS Otomasyon Modülü	//
-//	Bilrom Bilişim ve Medya Hiz. San. ve Tic. A.Ş.   	//
+//	 	MaestroPanel Lisans API - WHMCS Otomasyon Modülü		//
+//	 	 Bilrom Bilişim ve Medya Hiz. San. ve Tic. A.Ş.   		//
 // Yazılım Geliştirme ve AR-GE Ekibi tarafından hazırlanmıştır. //
-//			www.bilrom.com				//
-//		Yayınlanma Tarihi: 12.05.2014			//
+//			  			www.bilrom.com				   			//
+//				Yayınlanma Tarihi: 12.05.2014					//
+//				Son Düzenleme: 26.06.2014						//
 // ############################################################	//
 
 MaestroPanel Lisans API / WHMCS Modül Kurulumu
@@ -38,6 +39,16 @@ modules/servers/maestropanellisans/clientarea.tpl
 
 #################################################################
 
+v2.0 Değişiklikler
+- Addons > MaestroPanel Lisans arayüzü tamamlandı.
+- Artık WHMCS ile tüm lisansları yönetebilir, MaestroPanel arayüzüne bağlanmadan yeni lisanslar WHMCS üzerinden oluşturulabilir.
+- MaestroPanel Lisans API'ye eklenen tüm yeni fonksiyonlar modüle de entegre edildi. Admin arayüzünden, lisansın otomatik yenilenmesi ve iptal edilmesi mümkün.
+- İptal fonksiyonu varsayılan WHMCS fonksiyonu altına, "Terminate" fonksiyonuna entegre edildi.
+- clientarea ve admin arayüzüne "Oto. Yenileme Durumu" bilgisi eklendi.
+- API erişim bilgileri ile uzayan kod bloğu kısaltıldı.
+- Aynı MaestroPanel hesabını birden fazla markada kullanmayı daha rahat hale getirebilmek için lisans isimlerini ayırmakta yararlı olabilecek yeni bir addon parametresi eklendi. "License Name Prefix" bu parametrenin boş bırakılması halinde lisans isimlerine ön ek getirilmeyecektir. Bu parametre ile lisansın hangi markadan kayıt edildiğini ayırt edebilirsiniz.
+- Admin arayüzü lisans status düzeltildi.
+- BETA: External API Key parametresi eklendi. (Boş bırakınız.)
 
 v1.1 Değişiklikler
 - Her kullanıcının birden fazla ücretsiz lisans almasını engelleyen fonkisyon düzeltildi.
